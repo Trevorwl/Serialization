@@ -1,0 +1,47 @@
+#ifndef SERIALEXCEPTION_H_
+#define SERIALEXCEPTION_H_
+
+#include <cstring>
+#include <exception>
+#include <sstream>
+#include <string>
+
+namespace Serialization{
+
+	/*
+	 * Used for throwing serialization exceptions.
+	 * Can use in your own serialization functions.
+	 *
+	 * Author: Trevor Lash
+	 * Edited 2/14/23
+	 */
+	class SerialException : public std::exception{
+
+	  private:
+		char* message = nullptr;
+
+	  public:
+
+		SerialException(std::string msg) {
+			std::stringstream output;
+
+			char startmsg[]{"SerialException: "};
+
+			output.write(startmsg, strlen(startmsg));
+			output.write(msg.c_str(),
+			        strlen(msg.c_str()) + 1);
+
+			message = new char[output.tellp()];
+
+			output.seekg(std::ios::beg);
+			output.read(message, output.tellp());
+		}
+
+		const char* what () {
+			return message;
+		}
+	};
+}
+
+
+#endif 
