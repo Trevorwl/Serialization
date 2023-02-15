@@ -1,10 +1,11 @@
 #ifndef SERIALREADER_H_
 #define SERIALREADER_H_
 
-#include "Serializer.h"
-
 #include <fstream>
 #include <string>
+
+#include "Serializer.h"
+#include "SerialWriter.h"
 
 namespace Serialization{
 
@@ -82,10 +83,15 @@ namespace Serialization{
 			}
 
 			/*
-			 * Does this stream have an error?
+			 * Do we still have more to read and
+			 * still have no errors present?
 			 */
 			operator bool(){
-				return (bool)(*stream);
+				long nextTag = readNextId();
+				rewindId();
+
+				return (nextTag != Serialization::EOF_ID)
+						&& ((bool)(*stream));
 			}
 	};
 }

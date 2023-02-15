@@ -13,6 +13,11 @@
 namespace Serialization {
 
 	/*
+	 * Marks the end of the file.
+	 */
+	const long EOF_ID = Serialization::NO_ID / 8;
+
+	/*
 	 * Used to write serialized data to a file.
 	 * Objects implementing Serializable.h
 	 * are passed to addNode(), where their
@@ -26,11 +31,6 @@ namespace Serialization {
 			 * Where serializers are stored before writing
 			 */
 			std::vector<Serialization::Serializer*>allNodes;
-
-			/*
-			 * Size of all serializers' data
-			 */
-			long dataSize = 0;
 
 		public:
 
@@ -54,12 +54,6 @@ namespace Serialization {
 				}
 
 				allNodes.push_back(serialNode);
-
-				dataSize += (serialNode->getLength());
-			}
-
-			long getDataSize(){
-				return dataSize;
 			}
 
 			void writeToFile(std::string url){
@@ -75,6 +69,8 @@ namespace Serialization {
 
 					os.write(copy.get(), node->getLength());
 				}
+
+				os.write((char*)&EOF_ID, sizeof(long));
 
 				os.close();
 			}
