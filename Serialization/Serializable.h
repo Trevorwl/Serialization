@@ -12,6 +12,8 @@ namespace Serialization{
 	   Author: Trevor Lash
 	   Edited 2/16/23
 
+	  For objects that implement Serializable:
+
 	  The serialize() function should be written as
 
 		  Serialization::Serializer* serialize(){
@@ -19,6 +21,8 @@ namespace Serialization{
 					= new Serialization::Serializer(YOUR_OWN_CLASS_ID);
 
 			  //add data to serializer
+
+			  serializer->marshal(); //marshal the data. Must do this.
 
 			  return serializer;
 		  }
