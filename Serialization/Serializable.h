@@ -10,7 +10,18 @@ namespace Serialization{
 	   for this library.
 
 	   Author: Trevor Lash
-	   Edited 2/14/23
+	   Edited 2/16/23
+
+	  The serialize() function should be written as
+
+		  Serialization::Serializer* serialize(){
+		      Serialization::Serializer* serializer
+					= new Serialization::Serializer(YOUR_OWN_CLASS_ID);
+
+			  //add data to serializer
+
+			  return serializer;
+		  }
 
 	   Serializable classes should have
 	   a deserializing function in its file
@@ -19,16 +30,9 @@ namespace Serialization{
 		   Program::SomeObject* deserializeSomeObject(
 		           Serialization::SerialReader& reader){
 
-				std::ifstream* st = reader.stream;  //get data stream
-
-
 				reader.readNextId();  //consume block header
 
-
-
 				//getData
-
-
 
 				reader.readNextId(); 	//consume block footer
 

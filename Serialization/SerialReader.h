@@ -13,10 +13,10 @@ namespace Serialization{
 	 * A stream that reads serialized data from a file.
 	 * This object is passed to deserialization functions
 	 * for data extraction. Data in file being read is typically written
-	 * by a SerialWriter. See Serializable.h for more implementation details.
+	 * by a SerialWriter.
 	 *
 	 * Author: Trevor Lash
-	 * Edited 2/14/23
+	 * Edited 2/16/23
 	 */
 	class SerialReader{
 
@@ -26,6 +26,9 @@ namespace Serialization{
 
 		public:
 
+			/*
+			 * Underlying file stream.
+			 */
 			std::ifstream* stream;
 
 			SerialReader(std::string _url){
@@ -35,6 +38,10 @@ namespace Serialization{
 			~SerialReader(){
 				stream->close();
 				delete stream;
+			}
+
+			void readData(const void* dest, long size){
+				stream->read((char*)dest, size);
 			}
 
 			/*
@@ -54,13 +61,13 @@ namespace Serialization{
 			}
 
 			/*
+			 * Call this immediately after
+			 * reading a LIST_ID.
+			 *
 			 * Convenience method for
 			 * reading a list size for
 			 * an object with the tag
 			 * Serialization::LIST_ID.
-			 *
-			 * Call this immediately after
-			 * reading a LIST_ID.
 			 *
 			 * Mainly used so that a
 			 * user doesn't become
@@ -74,13 +81,14 @@ namespace Serialization{
 
 			/*
 			 * Goes back sizeof(long) bytes
-			 * so that id can be read in
+			 * so that an id tag can be read in
 			 * future reads.
 			 */
 			void rewindId(){
 				stream->seekg((stream->tellg())
-				        - Serialization::NODE_TAG_SIZE);
+						- Serialization::NODE_TAG_SIZE);
 			}
+
 
 			/*
 			 * Do we still have more to read and

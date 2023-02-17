@@ -1,14 +1,13 @@
 #ifndef SERIALWRITER_H_
 #define SERIALWRITER_H_
 
-#include "SerialException.h"
-#include "Serializable.h"
-#include "Serializer.h"
-
 #include <fstream>
 #include <string>
 #include <vector>
-#include <memory>
+
+#include "SerialException.h"
+#include "Serializable.h"
+#include "Serializer.h"
 
 namespace Serialization {
 
@@ -19,16 +18,20 @@ namespace Serialization {
 
 	/*
 	 * Used to write serialized data to a file.
-	 * Objects implementing Serializable.h
-	 * are passed to addNode(), where their
-	 * Serialize() function is called to extract data.
+	 * Objects implementing Serializable
+	 * are passed to addNode() by client code,
+	 * and the object's Serialize() function is called
+	 * to extract data.
+	 *
+	 * Author: Trevor Lash
+	 * Edited 2/16/23
 	 */
 	class SerialWriter{
 
 		private:
 
 			/*
-			 * Where serializers are stored before writing
+			 * Where the objects' serializers are stored before writing
 			 */
 			std::vector<Serialization::Serializer*>allNodes;
 
@@ -65,9 +68,7 @@ namespace Serialization {
 				std::ofstream os(url);
 
 				for(auto& node: allNodes){
-					std::unique_ptr<char>copy{node->getData()};
-
-					os.write(copy.get(), node->getLength());
+					os.write(node->shallowCopy(), node->getLength());
 				}
 
 				os.write((char*)&EOF_ID, sizeof(long));

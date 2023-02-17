@@ -8,6 +8,8 @@
 
 namespace Serialization{
 
+	const char* startmsg = "SerialException: ";
+
 	/*
 	 * Used for throwing serialization exceptions.
 	 * Can use in your own serialization functions.
@@ -25,14 +27,10 @@ namespace Serialization{
 		SerialException(std::string msg) {
 			std::stringstream output;
 
-			char startmsg[]{"SerialException: "};
-
 			output.write(startmsg, strlen(startmsg));
-			output.write(msg.c_str(),
-			        strlen(msg.c_str()) + 1);
+			output.write(msg.c_str(), msg.length() + 1);
 
 			message = new char[output.tellp()];
-
 			output.seekg(std::ios::beg);
 			output.read(message, output.tellp());
 		}

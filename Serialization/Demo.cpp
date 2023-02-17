@@ -4,11 +4,11 @@
 #include <string>
 #include <vector>
 
-#include "Serialization/ListSerializer.h"
-#include "Serialization/Serializable.h"
-#include "Serialization/Serializer.h"
-#include "Serialization/SerialReader.h"
-#include "Serialization/SerialWriter.h"
+#include "ListSerializer.h"
+#include "Serializable.h"
+#include "Serializer.h"
+#include "SerialReader.h"
+#include "SerialWriter.h"
 
 class Cll : public Serialization::Serializable{
 
@@ -32,69 +32,76 @@ class Cll : public Serialization::Serializable{
 		}
 
 		Serialization::Serializer* serialize(){
-			Serialization::Serializer* ser
+			Serialization::Serializer* serializer
 					= new Serialization::Serializer(CLL_ID);
 
-			ser->add(&x,sizeof(int));
-			ser->add(&y,sizeof(int));
+			serializer->add(&x,sizeof(int));
+			serializer->add(&y,sizeof(int));
 
-			Serialization::ListSerializer ls;
-			ls.setNumberOfItems(list.size());
+			Serialization::ListSerializer listSerializer(
+			        list.size());
 
 			for(auto e : list){
-				ls.add(&e,sizeof(int));
+				listSerializer.add(&e, sizeof(int));
 			}
 
-			ls.marshal();
+			listSerializer.marshal();
 
-			ser->add(&ls);
-			ser->marshal();
-			return ser;
+			serializer->add(&listSerializer);
+
+			serializer->marshal();
+			return serializer;
 		}
 };
 
-Cll* deserializeCll(Serialization::SerialReader& srd){
-	srd.readNextId();//read header
-	std::ifstream* ifs = srd.stream;//get stream
+Cll* deserializeCll(Serialization::SerialReader&
+        serialReader){
+	serialReader.readNextId();//read header
 
 	int x;
 	int y;
-	ifs->read((char*)&x, sizeof(int));
-	ifs->read((char*)&y, sizeof(int));
+	serialReader.readData((char*)&x, sizeof(int));
+	serialReader.readData((char*)&y, sizeof(int));
 
 	Cll* toReturn = new Cll(x, y);
 
-	srd.readNextId(); // read list header
-	int listSize = srd.readListSize(); // read list size
+	serialReader.readNextId(); // read list header
+	int length = serialReader.readListSize(); // read list size
 
-	toReturn->list.resize(listSize);
+	toReturn->list.resize(length);
 
-	for(int i = 0; i < listSize; i++){
-		ifs->read((char*)&(toReturn->list.at(i)),
-				sizeof(int));
+	for(int i = 0; i < length; i++){
+		serialReader.readData(&(toReturn->list)[i],
+		        sizeof(int));
 	}
-	srd.readNextId(); // read list footer
 
-	srd.readNextId();//read footer
+	serialReader.readNextId(); // read list footer
+
+	serialReader.readNextId();//read footer
 	return toReturn;
 }
 
-void Demo() {
+void demo() {
 	std::vector<Cll> objects{{1,1},{2,1},{3,1}};
 
-	Serialization::SerialWriter sw;
-	for(auto&e :objects){
-		sw.addNode(e);
+	Serialization::SerialWriter serialWriter;
+	for(auto& e : objects){
+		serialWriter.addNode(e);
 	}
 
-	sw.writeToFile("File.txt");
+	serialWriter.writeToFile("File.txt");
 
-	Serialization::SerialReader sr("File.txt");
+	Serialization::SerialReader serialReader("File.txt");
 
-	while(sr){
-		std::unique_ptr<Cll> ptr{
-			deserializeCll(sr)};
+	while(serialReader){
+		std::unique_ptr<Cll> data{
+			deserializeCll(serialReader)};
 
-		std::cout<< (std::string)(*ptr) <<std::endl;
+		std::cout << (std::string)(*data) << std::endl;
 	}
 }
+
+int main(int argc, char **argv) {
+	demo();
+}
+

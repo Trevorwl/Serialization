@@ -11,19 +11,19 @@
 namespace Serialization {
 
 	/*
-	* Default id. Needs to be changed to
-	* marshal the object.
+	* Default id. Serializer must have
+	* different id to be marshaled.
 	*/
 	const long NO_ID = std::numeric_limits<long>::max();
 
 	/*
-	 * Used in ListSerializer.h as an id.
+	 * Used in ListSerializer as an id.
 	 */
 	const long LIST_ID = std::numeric_limits<long>::min();
 
 	/*
 	 * Automatically added to data when this object
-	 * is marshalled. Needed to read it later.
+	 * is marshaled. Needed for deserialization.
 	 */
 	const long END_ID = NO_ID / 2;
 
@@ -37,7 +37,7 @@ namespace Serialization {
 	 * Handle used to hold serialized data.
 	 * Can be used directly. However,
 	 * it is recommended to have an
-	 * object implement Serializable.h
+	 * object implement class Serializable
 	 * and return a Serializer* that way.
 	 * The Serializable object is later passed
 	 * to SerialWriter.addNode(), where its
@@ -61,6 +61,8 @@ namespace Serialization {
 			char* data = nullptr;
 			long length = 0;
 
+		protected:
+
 			/*
 			 * Underlying stream for
 			 * this object
@@ -76,7 +78,7 @@ namespace Serialization {
 			/*
 			 * Copy constructor. Makes exact
 			 * copy. Only executes if argument
-			 * is marshalled.
+			 * is marshaled.
 			 */
 			Serializer(const Serialization::Serializer& o){
 				if(!o.isMarshalled()){
@@ -94,7 +96,7 @@ namespace Serialization {
 					marshalled = true;
 				}
 
-			    data = o.getData(),
+			    data = o.deepCopy(),
 			    length = o.length;
 
 				marshalStream.seekp(std::ios::beg);
@@ -156,9 +158,9 @@ namespace Serialization {
 
 			/*
 			 * sizeof(long) bytes if reserved at
-			 * beginning of data to write the Id tag.
-			 * This goes to the beginning of data to
-			 * write the id and then sets the cursor
+			 * beginning of data to write the id tag.
+			 * This function sets the cursor at beginning of data to
+			 * write the id, and then sets it
 			 * back at the end of the stream.
 			 */
 			void writeId(long _id){
@@ -173,13 +175,17 @@ namespace Serialization {
 		public:
 
 			/*
-			 * Returns 0 if not marshalled
+			 * Returns 0 if not marshaled
 			 */
 			long getLength() const{
 				return length;
 			}
 
-			char* getData() const {
+			const char* shallowCopy() const{
+				return data;
+			}
+
+			char* deepCopy() const {
 				if(!marshalled){
 					return nullptr;
 				}
@@ -220,22 +226,16 @@ namespace Serialization {
 
 			/*
 			 * Copies the stream into a
-			 * retreivable array. Adds tag END_ID
-			 * at the end for deserialization.
+			 * retrievable array. Adds tag END_ID
+			 * at the end for later deserialization.
 			 * marshal() can be called as many
-			 * times as needed to reupdate array.
+			 * times as needed to re-update the array.
 			 */
 			virtual void marshal(){
 				if(id == NO_ID){
 					throw new Serialization::SerialException(
 							"Serializer::marshal():"
 							"node has no id");
-
-				} else if(marshalStream.tellp()
-				        == NODE_TAG_SIZE){
-					throw new Serialization::SerialException(
-							"Serializer::marshal(): "
-							"node has no data");
 
 				} else if(marshalled){
 					delete[]data;
