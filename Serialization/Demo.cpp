@@ -100,8 +100,3 @@ void demo() {
 		std::cout << (std::string)(*data) << std::endl;
 	}
 }
-
-int main(int argc, char **argv) {
-	demo();
-}
-
