@@ -69,6 +69,7 @@ namespace Serialization{
 			 * not set.
 			 */
 			long getNumberOfItems(){
+				int x = 1;
 				return numberOfItems;
 			}
 
