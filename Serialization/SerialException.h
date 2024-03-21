@@ -49,6 +49,8 @@ void randFn(){
 
     
     int d = 100;
+
+	int c =4;
 	
     return 111;
 }
