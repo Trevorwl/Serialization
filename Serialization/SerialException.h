@@ -50,6 +50,8 @@ void randFn(){
     int d = 100;
 
 	int c =4;
+
+	int v = 1;
 	
     return 111;
 }
