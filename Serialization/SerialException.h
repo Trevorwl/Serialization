@@ -41,6 +41,7 @@ namespace Serialization{
 	};
 
 void randFn(){
+	int x = 5;
     return 111;
 }
 }
