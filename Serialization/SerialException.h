@@ -42,6 +42,11 @@ namespace Serialization{
 
 void randFn(){
 	int x = 5;
+	for (int i =0; i < x;i++){
+		std::cout<<"test";
+	}
+
+	
     return 111;
 }
 }
