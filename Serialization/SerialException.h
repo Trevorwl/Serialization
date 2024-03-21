@@ -39,7 +39,6 @@ namespace Serialization{
 			return message;
 		}
 	};
-}
 
 void randFn(){
     return 1;
