@@ -41,5 +41,8 @@ namespace Serialization{
 	};
 }
 
+void randFn(){
+    return 0;
+}
 
 #endif 
