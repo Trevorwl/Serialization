@@ -47,7 +47,6 @@ void randFn(){
 		std::cout<<"test";
 	}
 
-    
     int d = 100;
     
     return 111;
