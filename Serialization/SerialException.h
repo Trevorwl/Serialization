@@ -20,6 +20,7 @@ namespace Serialization{
 	 */
 	class SerialException : public std::exception{
 
+
 	  private:
 		char* message = nullptr;
 
