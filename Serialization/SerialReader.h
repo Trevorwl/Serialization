@@ -9,6 +9,7 @@
 
 namespace Serialization{
 
+
 	/*
 	 * A stream that reads serialized data from a file.
 	 * This object is passed to deserialization functions
