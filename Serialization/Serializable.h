@@ -5,6 +5,7 @@
 
 namespace Serialization{
 
+
 	/*
 	   An interface for classes to make them serializable
 	   for this library.
