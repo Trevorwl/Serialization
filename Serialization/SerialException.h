@@ -8,6 +8,7 @@
 
 namespace Serialization{
 
+
 	const char* startmsg = "SerialException: ";
 
 	/*
